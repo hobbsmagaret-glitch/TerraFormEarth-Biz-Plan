@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 
 // ── System prompt ─────────────────────────────────────────────────────────────
-const SYS = "You are an expert advisor with complete knowledge of TerraForm Earth's business plan. Be direct, precise, confident. No fluff.\n\nCOMPANY: TerraForm Earth. Founder & CEO: Hobbs Magaret — regenerative grazing expert, author of HERD, inventor of all core IP. Co-Founder & Executive Chairman: Matthew Warnken — founder of AgriProve, established climate entrepreneur.\n\nTHESIS: Acquire degraded semi-arid land at $200-600/ha (AUD), deploy autonomous earthworks to restore broken water cycle, generate stacked returns from carbon + data + cattle + land appreciation. Exit at $8,000-15,000/ha productive pricing. Arbitrage delta: $6,400-14,800/ha.\n\nFIVE-LAYER STACK: 1) Land & Water — degraded land cheap because market prices broken water cycle not latent potential. 2) Autonomous Earthworks — GPS bobcats (CTL + retrofit ~$180k/machine), Yeomans Plow on contour (human-operated near-term). 3) Ecological Manufacturing — passive, runs on rainfall, self-reinforcing positive loop. 4) HEIDI — intelligence platform, the moat, compounds with every property. 5) Revenue Surface — carbon Y2-3, data Y2, cattle Y3-5, land exit Y5-10.\n\nSEED RAISE: AUD $2.5M. Covers 4x CTL fleet (~$720k), JD 8R tractor + autonomy kit (~$750k), HEIDI architecture build ($400k), POC deployment inc. staffing + temp accommodation ($430k), regulatory + legal ($300k).\n\nPOC MODEL: Equipment-only deployment on partner-owned property. No land acquisition capital. Revenue share ~35%. Proves technology before acquisition model at scale.\n\nFINANCIALS (5,000ha base case, acquisition model): CapEx ~$3.5M AUD. Carbon from Y3 (ERF Soil Carbon, 0.8 tCO2e/ha/yr, ACCU $35/t). Cattle from Y5. Breakeven ~Y7. IRR ~25%. Land exit AUD $8,000/ha at Y7.\n\nKEY RISKS: Bobcat autonomy (RogueX3 concept only — CTL + retrofit near-term), Yeomans Plow requires human operator Y0-2, ACCU methodology (ERF Soil Carbon primary — IFLM not relied on), CASA BVLOS approval required for remote drone ops, IP gap between disclosure (March 12 2026) and patent filing, co-founder structure must be resolved before external capital.\n\nREHYDRATION: 10 techniques across 3 tiers. Tier 1 autonomous: swales, drone seeding, floodout earthworks. Tier 2 HEIDI-prescribed: contour bunds, deep ripping, biochar. Tier 3 manual/contractor: check dams, brush packing, zai pits, mulching.\n\nBEYOND EARTH: TerraForm Earth is a planetary engineering firm starting on the most accessible planet. Every system built transfers directly to Moon/Mars applications. Earth is the laboratory.";
+const SYS = "You are an expert advisor with complete knowledge of TerraForm Earth's business plan. Be direct, precise, confident. No fluff.\n\nCOMPANY: TerraForm Earth. Founder & CEO: Hobbs Magaret — regenerative grazing expert, author of HERD, inventor of all core IP. Co-Founder & Executive Chairman: Matthew Warnken — founder of AgriProve, established climate entrepreneur (AUD $500M+ company). Cap table: Matthew Warnken 51%, Hobbs Magaret 49%. All core IP owned by Hobbs Magaret and assigned to the company under the co-founding agreement.\n\nCORE THESIS (lead with the numbers): Degraded semi-arid pastoral land sells for $200-600/ha AUD. Identical land with a functioning water cycle sells for $8,000-15,000/ha. The water cycle is broken. The market discounts the land for it. Autonomous earthworks restore the hydrology at a capital cost lower than the value created. Arbitrage delta: $6,400-14,800/ha. This is the extraction engine. Everything else is margin on top.\n\nFIVE-LAYER STACK: 1) Land & Water — structural price gap created by broken hydrology, not latent poverty. 2) Autonomous Earthworks — GPS bobcats (CTL + retrofit ~$180k/machine), Yeomans Plow on contour (human-operated Y0-2). 3) Ecological Manufacturing — passive biological process triggered by restored water retention; runs on rainfall, zero ongoing capital. 4) HEIDI — acquirable intelligence platform, the moat, compounds with every property; the founding dataset for a new asset class; cannot be bought or replicated, only accumulated. 5) Revenue Surface — carbon Y2-3, data Y2, cattle Y3-5, land exit Y5-10.\n\nSEED RAISE: AUD $2.5M. Equipment-only POC on partner property (LOI to be executed pre-deployment). 4x CTL fleet (~$720k), JD 8R tractor + autonomy kit (~$750k), HEIDI architecture build ($400k), POC deployment + staffing ($430k), regulatory + legal ($300k). Revenue share ~35% with partner landowner — time-limited to POC period.\n\nPOC VALIDATES: (1) Pit cycle time — the single most critical unvalidated unit economic input. (2) Earthworks productivity $/ha. (3) Partner revenue share structure. (4) VLOS drone operations pre-BVLOS.\n\nFINANCIALS (5,000ha base case, acquisition model): CapEx ~$3.5M AUD. Carbon from Y3 (ERF Soil Carbon, 0.8 tCO2e/ha/yr, ACCU $35/t). Cattle from Y5. Breakeven ~Y7. IRR ~25%. Land exit AUD $8,000/ha at Y7. Pre-Year-7 liquidity path: HEIDI data licensing revenue + Series A recapitalisation or partial property exit.\n\nKEY RISKS: Bobcat autonomy (RogueX3 concept only — CTL + retrofit near-term), Yeomans Plow requires human operator Y0-2, ACCU methodology (ERF Soil Carbon primary; IFLM not relied upon but structurally favourable — <5t/ha biomass threshold passed by design; GEDI screening standard pre-acquisition; not yet gazetted), CASA BVLOS approval 12-18 months (POC VLOS-compliant; BVLOS unlocks full SheepDog commercial deployment), IP filed March 12 2026 (gap to patent: 6-month priority).\n\nREHYDRATION: 10 techniques across 3 tiers. Tier 1 autonomous: swales, drone seeding, floodout earthworks. Tier 2 HEIDI-prescribed: contour bunds, deep ripping, biochar. Tier 3 manual/contractor: check dams, brush packing, zai pits, mulching.\n\nBEYOND EARTH: Available in The Long Game tab for investors who think at civilisational scale. Not the primary investment thesis — the arbitrage and the data platform are.";
 
 // ── Diagram HTML strings ──────────────────────────────────────────────────────
 const SHEEPDOG_HTML = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui,sans-serif;background:#fff;color:#1a1a1a;padding:24px}@keyframes drift{0%{transform:translate(0,0)}50%{transform:translate(8px,4px)}100%{transform:translate(0,0)}}.cow{animation:drift 4s ease-in-out infinite}.cow:nth-child(2n){animation-delay:.6s}.cow:nth-child(3n){animation-delay:1.2s}.btn{padding:5px 14px;border-radius:6px;border:.5px solid #d3d1c7;background:transparent;color:#5f5e5a;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}.btn.on{background:#e6f1fb;border-color:#378add;color:#185fa5}.det{margin:10px 0 0;padding:14px 18px;border-radius:8px;background:#f5f4ef;border:.5px solid #d3d1c7;font-size:13px;color:#5f5e5a;line-height:1.7;min-height:52px}.det strong{color:#1a1a1a;font-weight:500}</style></head><body><div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn on" id="b1" onclick="setState(1)">1 - Mob drifting</button><button class="btn" id="b2" onclick="setState(2)">2 - Algorithm detects</button><button class="btn" id="b3" onclick="setState(3)">3 - Drone intercepts</button><button class="btn" id="b4" onclick="setState(4)">4 - Mob redirected</button></div><svg width="100%" viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><rect x="30" y="30" width="620" height="250" rx="8" fill="#d4c99a" opacity=".35"/><line x1="570" y1="30" x2="570" y2="280" stroke="#E24B4A" stroke-width="2" stroke-dasharray="8 5" opacity=".7"/><text x="576" y="50" font-family="system-ui,sans-serif" font-size="11" fill="#E24B4A" font-weight="500">virtual boundary</text><g id="mob"><g class="cow" id="lead"><circle cx="440" cy="150" r="9" fill="#BA7517" opacity=".9"/><text x="440" y="154" text-anchor="middle" font-family="system-ui,sans-serif" font-size="8" fill="#fff">L</text></g><g class="cow"><circle cx="400" cy="138" r="7" fill="#8a6035" opacity=".75"/></g><g class="cow"><circle cx="390" cy="162" r="7" fill="#8a6035" opacity=".75"/></g><g class="cow"><circle cx="370" cy="145" r="7" fill="#8a6035" opacity=".75"/></g><g class="cow"><circle cx="360" cy="168" r="7" fill="#8a6035" opacity=".75"/></g><g class="cow"><circle cx="415" cy="175" r="7" fill="#8a6035" opacity=".75"/></g><g class="cow"><circle cx="345" cy="152" r="7" fill="#8a6035" opacity=".75"/></g><text x="440" y="132" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" fill="#633806">lead animal</text></g><g id="s1arrows"><path d="M 440,145 L 478,145" fill="none" stroke="#BA7517" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr)" opacity=".7"/><text x="295" y="210" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#854f0b">mob drifting toward boundary</text></g><g id="s2" style="display:none"><ellipse cx="420" cy="153" rx="95" ry="50" fill="none" stroke="#7F77DD" stroke-width="1.5" stroke-dasharray="6 4" opacity=".7"/><text x="295" y="100" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#534ab7">mob boundary detected -- drift pattern identified</text><circle cx="440" cy="150" r="14" fill="none" stroke="#7F77DD" stroke-width="2" opacity=".8"/><text x="295" y="225" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#534ab7">algorithm calculates: approach vector, altitude, hover distance</text></g><g id="s3" style="display:none"><rect x="488" y="60" width="24" height="9" rx="3" fill="#BA7517" opacity=".95"/><circle cx="440" cy="150" r="14" fill="none" stroke="#BA7517" stroke-width="2" opacity=".8"/><text x="295" y="225" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#854f0b">drone applies pressure to lead animal -- mob follows</text></g><g id="s4" style="display:none"><path d="M 430,155 L 330,155" fill="none" stroke="#1D9E75" stroke-width="2.5" marker-end="url(#arr)"/><text x="295" y="225" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#0f6e56">boundary not crossed. drone returns to collect pasture + carbon data.</text></g><rect x="44" y="44" width="80" height="32" rx="6" fill="#f1efe8" stroke="#d3d1c7" stroke-width="0.5"/><text x="84" y="58" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#5f5e5a" font-weight="500">base station</text><text x="84" y="70" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" fill="#888780">algorithm + charging</text></svg><div class="det" id="det">The mob-state algorithm runs continuously. It identifies drift patterns early and calculates the minimum-necessary intervention before the boundary is reached.</div><script>var D=["The mob is grazing normally but the lead animal is drifting toward the virtual boundary. The ear tag network tracks every position in real time.","The algorithm calculates projected arrival time at the boundary and identifies the lead animal as the critical leverage point. It calculates the optimal drone approach vector, altitude, and hover distance.","The drone departs the base station and arrives at the intercept point. It activates the lead animal's evolved flight-zone response. The mob follows.","The boundary is not crossed. The drone returns to base and resumes multispectral imaging of pasture biomass and thermal scanning for animal health."];function setState(n){[1,2,3,4].forEach(function(i){var el=document.getElementById("s"+i);if(el)el.style.display=(i===n&&n>1)?"":"none";document.getElementById("b"+i).className="btn"+(i===n?" on":"");});document.getElementById("s1arrows").style.display=n===1?"":"none";document.getElementById("det").innerHTML="<strong>Stage "+n+"</strong><br>"+D[n-1];}</script></body></html>`;
@@ -175,8 +175,8 @@ function StackView() {
   const layers = [
     { n:1, label:"Land & Water", sub:"The foundation", color:"#c4420a", lightBg:"#fff5f0", desc:"Degraded semi-arid land at $200-600/ha. The market prices a broken water cycle, not the land's latent potential. The spread between degraded and productive pricing is structural -- it exists because no one has previously been able to close it at economic cost.", stats:["$200-600/ha acquisition (AUD)","250-450mm/yr rainfall required","$200-600 vs $8,000-15,000/ha spread"] },
     { n:2, label:"Autonomous Earthworks", sub:"The picks and shovels", color:"#9a5a00", lightBg:"#fffbf0", desc:"GPS-guided CTLs excavate crescent half-moon pits at DEM-optimised density. Yeomans Plow on true topographic contour. ~$140-180/ha all-in. One-time capital deployment that functions passively for decades.", stats:["AUD $140-180/ha (derived, not assumed)","One-time capital event","Yeomans Plow human-operated Y0-2"] },
-    { n:3, label:"Ecological Manufacturing", sub:"The compounding mechanism", color:"#0a6b47", lightBg:"#f0faf5", desc:"Passive biological regeneration triggered by restored water retention. Pioneer species germinate. Root networks fracture hardpan. Self-reinforcing positive feedback loop. Runs entirely on rainfall. The only layer that improves without human intervention and without cost.", stats:["Soil moisture: days to weeks","Carrying capacity years 3-5","Zero ongoing capital required"] },
-    { n:4, label:"HEIDI -- Intelligence", sub:"The moat", color:"#3b33a0", lightBg:"#f5f4ff", desc:"The accumulated institutional knowledge of every property TerraForm has ever operated. Cannot be bought, reverse-engineered, or accelerated. A competitor entering in Year 5 starts from zero longitudinal data -- a gap that cannot be closed by capital alone.", stats:["Compounds with every property added","Natural language interface: phone, desktop, voice","Data schema must be designed before deployment"] },
+    { n:3, label:"Ecological Manufacturing", sub:"The compounding mechanism", color:"#0a6b47", lightBg:"#f0faf5", desc:"Passive biological restoration triggered by restored water retention. Pioneer species germinate. Root networks fracture hardpan. Self-reinforcing positive feedback loop. Runs entirely on rainfall. This is not a philosophical position -- it is the cost structure. Capital deployed once in earthworks produces land value that compounds for decades at zero additional cost.", stats:["Soil moisture: days to weeks","Carrying capacity years 3-5","Zero ongoing capital required"] },
+    { n:4, label:"HEIDI -- Intelligence", sub:"The moat", color:"#3b33a0", lightBg:"#f5f4ff", desc:"The accumulated institutional knowledge of every property TerraForm has ever operated. The founding dataset for a new asset class: verified, continuously monitored ecological transformation data that insurance underwriters, carbon registries, and agricultural banks cannot source elsewhere. Cannot be bought, reverse-engineered, or accelerated. A competitor entering in Year 5 starts from zero longitudinal data -- a gap that cannot be closed by capital alone.", stats:["Compounds with every property added","Natural language interface: phone, desktop, voice","Data schema must be designed before deployment"] },
     { n:5, label:"Revenue Surface", sub:"The output, not the strategy", color:"#1155a0", lightBg:"#f0f6ff", desc:"Carbon credits (Y2-3), Data licensing (Y2), Cattle income (Y3-5), Land appreciation (Y5-10). Defensible only because it sits on top of layers 1-4. A competitor can run cattle. A competitor can do carbon. They cannot replicate the full stack simultaneously.", stats:["Carbon from Year 2-3 (ERF Soil Carbon)","Land exit AUD $8,000-15,000/ha","4 stacked revenue streams"] },
   ];
   return (
@@ -336,11 +336,11 @@ function buildFinModel(a, model) {
     var manOpex  = (yr > 0 && yr <= 2) ? 0.12 : 0;
     var opex     = yr === 0 ? 0 : 0.1 + manOpex;
     var exitVal  = (model === "acquisition" && yr === 7) ? a.exitPrice * a.ha / 1e6 : 0;
-    var ann = yr === 0 ? -capex : (carbon + cattle + data - opex + exitVal);
+    var ann = yr === 0 ? -capex : (goat + carbon + cattle + data - opex + exitVal);
     cum += ann;
     cfs.push(ann);
     var lv = model === "acquisition" ? landCost + (a.exitPrice * a.ha / 1e6 - landCost) * Math.min(yr / 7, 1) : 0;
-    rows.push({ y:"Y"+yr, cf:parseFloat(cum.toFixed(1)), lv:parseFloat(lv.toFixed(1)), carbon:parseFloat(carbon.toFixed(2)), cattle:parseFloat(cattle.toFixed(2)), data:parseFloat(data.toFixed(2)) });
+    rows.push({ y:"Y"+yr, cf:parseFloat(cum.toFixed(1)), lv:parseFloat(lv.toFixed(1)), goat:parseFloat(goat.toFixed(3)), carbon:parseFloat(carbon.toFixed(2)), cattle:parseFloat(cattle.toFixed(2)), data:parseFloat(data.toFixed(2)) });
   }
   var be  = rows.findIndex(function(r) { return r.cf >= 0; });
   var irr = calcIRR(cfs);
@@ -495,6 +495,10 @@ function FinChart() {
       <div style={{ marginTop:14, padding:14, background:"#f5f4ff", border:"1px solid #c5c2f0", borderRadius:8, fontSize:13, fontFamily:"system-ui,sans-serif", color:"#3d3d3a", lineHeight:1.7 }}>
         <strong style={{ color:"#3b33a0" }}>Carbon methodology: </strong>
         All scenarios modelled on ERF Soil Carbon -- established under the Clean Energy Regulator. Year 1 carbon revenue is zero in all scenarios. ACCU spot price: AUD $30-35/t (EY, Jan 2026); EY central estimate AUD $70/t by 2035. Sequestration rate: 0.3-1.5 tCO2e/ha/yr. Floor case / "Exclude carbon" button models zero ACCU income to confirm model viability without carbon revenue.
+        {" "}<strong style={{ color:"#3b33a0" }}>IFLM outlook: </strong>
+        The Integrated Farm and Land Management method (HIR replacement) is not relied upon in base case projections, but its draft eligibility criteria are structurally aligned with TerraForm's target properties. The method requires {`<`}5 t/ha above-ground woody biomass at crediting commencement -- a threshold that degraded semi-arid pastoral land passes by definition. The same broken hydrology that suppresses vegetation establishment (and creates the land arbitrage opportunity) also keeps biomass below the eligibility ceiling. Pre-acquisition GEDI satellite biomass screening is standard due diligence; properties that fail the threshold are excluded before any offer. The IFLM crediting window -- from degraded baseline toward productive carrying capacity -- is coextensive with TerraForm's operational intervention period. IFLM had not been gazetted as of early 2026; financial projections treat it as upside only and do not accelerate the base case carbon timeline on its account.
+        {" "}<strong style={{ color:"#3b33a0" }}>Pre-exit liquidity: </strong>
+        7-year land exit is the primary value realisation event, but the model provides multiple earlier liquidity signals: HEIDI data licensing revenue from Year 2-3, Series A recapitalisation against demonstrated first-property outcomes (Year 3-4), and partial property exit optionality. The business does not depend on a single binary 7-year event.
       </div>
     </div>
   );
@@ -544,16 +548,16 @@ function TechCard({ t, tierLabel, tierColor, tierBg }) {
 function RiskTable() {
   const [open, setOpen] = useState(null);
   var risks = [
-    { label:"Mispriced acquisition",        sev:"Critical", sc:"#c0392b", mit:"Rigorous pre-acquisition due diligence: rainfall adequacy, soil profile, topographic treatment cost confirmed before any price is agreed. Cannot be corrected downstream." },
+    { label:"Mispriced acquisition",        sev:"Critical", sc:"#c0392b", mit:"Rigorous pre-acquisition due diligence: rainfall adequacy, soil profile, topographic treatment cost, and GEDI biomass screening confirmed before any price is agreed. Target distressed-sale contexts (collapsed carbon projects, second-campaign listings) where vendor motivation is structural. Cannot be corrected downstream." },
     { label:"Ecological timeline variance",  sev:"High",     sc:"#c0392b", mit:"Conservative projections built on below-average rainfall assumptions. Carbon revenue from Y2 provides interim cash flow. Portfolio diversification across rainfall zones." },
-    { label:"HEIDI architecture deferred",   sev:"High",     sc:"#c0392b", mit:"Treat as pre-revenue foundational capital. Every property without properly-designed HEIDI loses longitudinal continuity permanently. Cannot be retrofitted." },
+    { label:"HEIDI architecture deferred",   sev:"High",     sc:"#c0392b", mit:"Treat as pre-revenue foundational capital. Data schema, carbon model structure, and API layer must be locked before first sensor is deployed. Every property without properly-designed HEIDI loses longitudinal continuity permanently. Cannot be retrofitted." },
+    { label:"Partner property not contracted",sev:"High",    sc:"#c0392b", mit:"Partner property LOI must be executed before the raise closes. 'Equipment-only on partner land' is not an investment thesis without a named, contracted landowner. A signed agreement with specific revenue share terms converts the POC model from narrative to transaction." },
     { label:"Native Title delays (WA)",      sev:"High",     sc:"#c0392b", mit:"Early engagement, ILUA negotiation. NT Aboriginal freehold model avoids Native Title exposure entirely." },
     { label:"Bobcat autonomy readiness",     sev:"High",     sc:"#c0392b", mit:"RogueX3 is a concept prototype. Near-term: standard CTL + GPS-guided semi-autonomous operation. Full autonomy is a development milestone, not a Day 1 feature. Reflected in CapEx model." },
     { label:"Yeomans Plow autonomy gap",     sev:"High",     sc:"#c0392b", mit:"JD 8R autonomy kit interoperable with JD implements only. Yeomans Plow requires human operator Y0-2. Staffing and OpEx implications reflected in financial model." },
-    { label:"CASA BVLOS approval",           sev:"Medium",   sc:"#b05a00", mit:"Commercial BVLOS requires CASA ReOC with BVLOS endorsement. Timeline 12-18 months. POC operations are VLOS-compliant. BVLOS not required for seed-stage deployment." },
-    { label:"ACCU methodology",             sev:"Medium",   sc:"#b05a00", mit:"ERF Soil Carbon is the primary pathway -- established and registered. IFLM not relied upon. Floor case excludes carbon entirely to confirm model viability without ACCU income." },
+    { label:"CASA BVLOS approval",           sev:"Medium",   sc:"#b05a00", mit:"Commercial BVLOS requires CASA ReOC with BVLOS endorsement. Timeline 12-18 months. POC earthworks and carbon operations are VLOS-compliant and proceed regardless. BVLOS is the unlock for full commercial SheepDog/Kelpie deployment -- a Phase 2 milestone, not a POC dependency." },
+    { label:"ACCU methodology",             sev:"Medium",   sc:"#b05a00", mit:"ERF Soil Carbon is the primary pathway -- established and registered under the Clean Energy Regulator. IFLM (the HIR replacement) is not relied upon in financial projections, but its draft eligibility criteria are structurally aligned with TerraForm's target properties: the method requires <5 t/ha above-ground woody biomass at crediting commencement, which degraded semi-arid pastoral land passes by definition. Pre-acquisition GEDI satellite biomass screening confirms eligibility before any offer is made. IFLM had not been gazetted as of early 2026; base case carbon timeline is not accelerated on its account. Floor case excludes carbon income entirely to confirm model viability without any ACCU revenue." },
     { label:"IP exposure",                  sev:"Medium",   sc:"#b05a00", mit:"VF2.0 invention disclosure filed March 12, 2026. Gap between disclosure and patent filing is active exposure. Patent applications across all systems: 6-month priority target." },
-    { label:"Co-founder equity structure",  sev:"High",     sc:"#c0392b", mit:"All IP owned by Hobbs Magaret and predates co-founding discussions. Formal equity, IP assignment, and vesting terms with Matthew Warnken must be resolved before external capital is raised. 30-day target." },
     { label:"Carbon market methodology",    sev:"Medium",   sc:"#b05a00", mit:"Carbon modelled as upside in base case. Floor case must show viability without ACCUs -- confirmed. Earthworks economics close on livestock + land appreciation alone." },
     { label:"Compaction layer depth",       sev:"Medium",   sc:"#b05a00", mit:"Soil profile assessment during pre-acquisition due diligence. Confirm working depth before deployment. Deep ripping available as conditional additional system." },
     { label:"Replication risk",             sev:"Medium",   sc:"#b05a00", mit:"Technique is replicable. Moat is HEIDI data. Only defence is speed -- build data platform depth before competitors reach meaningful scale." },
@@ -646,7 +650,6 @@ export default function App() {
     { id:"overview",    label:"Overview" },
     { id:"stack",       label:"The Stack" },
     { id:"technology",  label:"Technology" },
-    { id:"sheepdog",    label:"SheepDog" },
     { id:"operations",  label:"Operations" },
     { id:"rehydration", label:"Rehydration" },
     { id:"land",        label:"Land Strategy" },
@@ -692,19 +695,19 @@ export default function App() {
         {tab==="overview" && (
           <div>
             <div style={s.eyebrow}>Investor Briefing -- March 2026</div>
-            <h1 style={s.h1}>The market prices what it can see.<br/>We manufacture what it cannot.</h1>
-            <p style={{ ...s.body, fontSize:17, maxWidth:620 }}>Degraded semi-arid land trades at a fraction of productive land pricing because the market prices current condition. TerraForm Earth acquires this land, deploys an autonomous earthworks fleet to restore the water cycle, and manufactures productive capacity where none visibly existed. Four revenue streams compound across the manufacturing timeline.</p>
-            <blockquote style={s.quote}>"We have identified a structural price gap in Australian land markets, built an autonomous system that closes it repeatably at scale, and are constructing a proprietary intelligence platform that compounds in value with every property added to the network."</blockquote>
+            <h1 style={s.h1}>$200/ha in. $8,000/ha out.<br/>The gap is structural. The system closes it.</h1>
+            <p style={{ ...s.body, fontSize:17, maxWidth:620 }}>Degraded semi-arid pastoral land sells for $200-600/ha. Identical land with a functioning water cycle sells for $8,000-15,000/ha. The discount exists because the water cycle is broken — and until now, nobody could restore it at economic cost. Autonomous earthworks change that cost structure permanently. TerraForm Earth acquires the discount, deploys the system, and captures the spread across four stacked revenue streams.</p>
+            <blockquote style={s.quote}>"The land is not cheap because it lacks rainfall. It is cheap because it cannot hold the rainfall it receives. We fix the hydrology. The market re-prices the land. The delta is $6,400-14,800 per hectare. That is the business."</blockquote>
             <hr style={s.rule}/>
             <h2 style={s.h2}>The opportunity in numbers</h2>
             <div style={s.metaGrid}>
               {[
-                { label:"Degraded acquisition",  val:"$200-600/ha",  note:"AUD -- NT comparable (Bendigo Bank, H1 2025)" },
-                { label:"All-in treatment cost",  val:"~$350-780/ha", note:"AUD -- land + earthworks (base case)" },
-                { label:"Productive exit value",  val:"$8,000-15,000/ha", note:"AUD -- N. Australia beef land (ABARES 2024)" },
-                { label:"First carbon revenue",   val:"Year 2-3",     note:"ERF Soil Carbon -- after project registration" },
-                { label:"Seed raise",             val:"AUD $2.5M",    note:"Equipment-only POC model -- no land acquisition" },
-                { label:"The moat",               val:"HEIDI data",   note:"Compounds with every property added" },
+                { label:"Arbitrage delta",       val:"$6,400-14,800/ha", note:"AUD -- degraded to productive. The extraction engine." },
+                { label:"Degraded acquisition",  val:"$200-600/ha",      note:"AUD -- NT comparable (Bendigo Bank, H1 2025)" },
+                { label:"All-in treatment cost",  val:"~$350-780/ha",    note:"AUD -- land + earthworks (base case)" },
+                { label:"Productive exit value",  val:"$8,000-15,000/ha",note:"AUD -- N. Australia beef land (ABARES 2024)" },
+                { label:"Seed raise",             val:"AUD $2.5M",       note:"Equipment-only POC -- no land acquisition capital" },
+                { label:"The moat",               val:"HEIDI data",      note:"Acquirable IP. Compounds with every property added." },
               ].map(function(m) {
                 return <div key={m.label} style={s.metaCell}><div style={s.metaVal}>{m.val}</div><div style={s.metaLabel}>{m.label}</div><div style={s.metaNote}>{m.note}</div></div>;
               })}
@@ -713,9 +716,9 @@ export default function App() {
             <h2 style={s.h2}>Why the price gap is structural</h2>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12, marginBottom:8 }}>
               {[
-                { n:"01", label:"The land is cheap for the wrong reason", color:"#c4420a", body:"The market discounts degraded land because it cannot see the broken water cycle -- it sees bare compacted earth. TerraForm acquires the discount, then removes the cause of it." },
-                { n:"02", label:"Autonomous earthworks close the cost gap", color:"#9a5a00", body:"GPS-guided autonomous earthworks change the cost structure permanently. The manufacturing margin between all-in treatment cost and exit value is real and repeatable. Every property is the same playbook." },
-                { n:"03", label:"The ecological process runs on rainfall", color:"#0a6b47", body:"After earthworks are deployed, the ecological manufacturing process requires no further capital. Pioneer species germinate, root networks fracture hardpan, vegetation establishes. Capital deployed once. Value compounds for decades." },
+                { n:"01", label:"The discount exists for a fixable reason", color:"#c4420a", body:"The market prices bare compacted earth. It does not price broken hydrology as a temporary condition. TerraForm buys the discount, then removes its cause. The spread is not speculative — it is the difference between current condition and restored condition, both benchmarked against comparable transactions." },
+                { n:"02", label:"Autonomous earthworks change the cost structure", color:"#9a5a00", body:"GPS-guided earthworks convert what was a cost-prohibitive manual operation into a scalable capital deployment. The manufacturing margin between all-in treatment cost ($350-780/ha) and productive exit value ($8,000-15,000/ha) is real, repeatable, and improves with fleet scale." },
+                { n:"03", label:"The restoration process is zero ongoing cost", color:"#0a6b47", body:"Once earthworks are deployed, biological restoration is triggered by water retention and runs on rainfall. No further capital required. This is not an ideological position — it is the cost structure. Capital deployed once produces value that compounds for decades." },
               ].map(function(c) {
                 return (
                   <div key={c.n} style={{ ...s.cardSm, borderTop:"3px solid "+c.color }}>
@@ -732,7 +735,7 @@ export default function App() {
               {[
                 { label:"Carbon credits",     note:"ERF Soil Carbon method. First issuance Year 2-3 after project registration.",              color:"#0a6b47", pct:0,  timing:"Year 2-3" },
                 { label:"Data licensing",     note:"Telemetry, pasture imaging, carbon data licensed to processors, financiers, verifiers.",    color:"#3b33a0", pct:18, timing:"Year 2" },
-                { label:"Cattle -- VF2.0",    note:"No physical fencing capital. Rotational grazing under SheepDog drone management.",            color:"#9a5a00", pct:36, timing:"Year 3-5" },
+                { label:"Cattle -- VF2.0",    note:"No physical fencing capital. Rotational grazing under RINGER drone management.",            color:"#9a5a00", pct:36, timing:"Year 3-5" },
                 { label:"Land appreciation",  note:"Degraded to productive pricing. Largest single value event. Crystallised at exit.",         color:"#c4420a", pct:54, timing:"Year 5-10" },
               ].map(function(str) {
                 return (
@@ -753,10 +756,10 @@ export default function App() {
             <h2 style={s.h2}>The defensible position</h2>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
               {[
-                { label:"HEIDI -- the data moat",        color:"#3b33a0", bg:"#f5f4ff", body:"Every property TerraForm operates builds the longitudinal dataset that makes HEIDI's models more accurate. A competitor entering in Year 5 starts from zero. The gap cannot be closed by capital alone -- only by time." },
-                { label:"Near-zero land access cost",     color:"#c4420a", bg:"#fff5f0", body:"WA Diversification Leases, DPaW co-management, SA surrendered pastoral leases, and NT Aboriginal Land Trust JVs create a pathway to millions of hectares at nominal or zero acquisition cost." },
-                { label:"Stacked environmental markets", color:"#0a6b47", bg:"#f0faf5", body:"A single property can simultaneously generate soil carbon ACCUs and Nature Repair Market biodiversity certificates. Legally confirmed -- one parcel, multiple income streams." },
-                { label:"The long game",                 color:"#888780", bg:"#f9f8f5", body:"Every system TerraForm builds to restore a broken water cycle is, at its deepest logic, a system for making barren worlds habitable. Earth is the laboratory. The data platform, the autonomous fleet, the ecological manufacturing protocols -- all of it scales beyond this planet." },
+                { label:"HEIDI -- acquirable intelligence",    color:"#3b33a0", bg:"#f5f4ff", body:"HEIDI is not a farm management tool. It is the founding dataset for a new asset class: verified, continuously monitored, landscape-scale ecological transformation data. Insurance underwriters, carbon registries, sovereign wealth funds, and agricultural banks cannot get this data anywhere else. A competitor entering in Year 5 starts from zero longitudinal depth. The gap cannot be closed by capital — only by time." },
+                { label:"Distressed sellers, motivated by design", color:"#c4420a", bg:"#fff5f0", body:"TerraForm targets properties where the acquisition thesis has already failed once: collapsed carbon projects, departing pastoralists, second-campaign listings. These vendors are motivated. The discount is real. WA Diversification Leases, DPaW co-management, SA surrendered pastoral leases, and NT Aboriginal Land Trust JVs extend access to millions of hectares at near-zero acquisition cost." },
+                { label:"Stacked environmental markets",         color:"#0a6b47", bg:"#f0faf5", body:"A single property can simultaneously generate soil carbon ACCUs, Nature Repair Market biodiversity certificates, and feral animal avoided-emissions credits. Legally confirmed -- one parcel, multiple income streams, no additional land required." },
+                { label:"The long game",                         color:"#888780", bg:"#f9f8f5", body:"Every system TerraForm builds to restore a broken water cycle is, at its deepest logic, a system for making barren worlds habitable. Earth is the laboratory. Available in The Long Game tab for investors who think at that scale." },
               ].map(function(c) {
                 return (
                   <div key={c.label} style={{ background:c.bg, border:"1px solid #e8e6e0", borderRadius:8, padding:"18px 20px" }}>
@@ -774,7 +777,7 @@ export default function App() {
             <div style={s.eyebrow}>Business architecture</div>
             <h1 style={s.h1}>The five-layer stack</h1>
             <p style={s.body}>TerraForm Earth manufactures value -- it does not extract it from land that is already productive. Value concentrates at the layers that are hardest to see, hardest to replicate, and most foundational to everything above them.</p>
-            <blockquote style={s.quote}>"The foundation is the acquisition. The manufacturing is the earthworks. The moat is the data. The return is the spread."</blockquote>
+            <blockquote style={s.quote}>"The foundation is the acquisition. The manufacturing is the earthworks. The moat is the data. The return is the spread. Everything else is margin on top of those four sentences."</blockquote>
             <StackView/>
             <hr style={s.rule}/>
             <h2 style={s.h2}>Regeneration feedback loop</h2>
@@ -786,17 +789,17 @@ export default function App() {
         {tab==="technology" && (
           <div>
             <div style={s.eyebrow}>Platform technology</div>
-            <h1 style={s.h1}>HEIDI and the autonomous earthworks fleet</h1>
+            <h1 style={s.h1}>HEIDI, VF2.0, and the autonomous earthworks fleet</h1>
             <div style={{ ...s.card, borderLeft:"3px solid #3b33a0" }}>
               <h2 style={{ ...s.h2, marginBottom:4, color:"#3b33a0" }}>HEIDI -- the intelligence platform</h2>
-              <div style={{ fontSize:13, fontFamily:"system-ui,sans-serif", color:"#888780", marginBottom:16, fontStyle:"italic" }}>The moat. Cannot be bought. Cannot be replicated. Only accumulated.</div>
-              <p style={s.body}>HEIDI is not software that manages a property -- it is the accumulated institutional knowledge of every property TerraForm Earth has ever operated. Every paddock's specific response to rainfall. Every animal's individual behavioural profile. Every carbon cycle's measured trajectory. Every obstacle below the soil surface.</p>
-              <p style={{ ...s.body, marginBottom:16 }}>A competitor entering in Year 5 does not start at Year 5. They start at Year 1 -- with no longitudinal data, no property-specific predictive models, no individual animal histories, no subsurface maps.</p>
+              <div style={{ fontSize:13, fontFamily:"system-ui,sans-serif", color:"#888780", marginBottom:16, fontStyle:"italic" }}>The moat. Cannot be bought. Cannot be replicated. Only accumulated. Acquirable as a standalone data asset.</div>
+              <p style={s.body}>HEIDI is not software that manages a property -- it is the founding dataset for a new asset class. Every paddock's specific response to rainfall. Every animal's individual behavioural profile. Every carbon cycle's measured trajectory. Every obstacle below the soil surface. Insurance underwriters, carbon registries, sovereign wealth funds, and agricultural banks cannot get this data from anywhere else. HEIDI is the reason TerraForm's data licensing revenue begins in Year 2 and compounds indefinitely.</p>
+              <p style={{ ...s.body, marginBottom:16 }}>A competitor entering in Year 5 does not start at Year 5. They start at Year 1 -- with no longitudinal data, no property-specific predictive models, no individual animal histories, no subsurface maps. The gap cannot be closed by capital alone.</p>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
                 {[
                   { label:"Data ingestion",         color:"#3b33a0", items:["Earthworks fleet -- position, task progress, soil sensor readings","Ear tag network -- continuous animal telemetry and behaviour state","Drone fleet -- multispectral imaging, thermal, carbon MRV","Environmental sensors -- rainfall, soil moisture, temperature"] },
                   { label:"Property world model",    color:"#3b33a0", items:["Single continuously updated model per property","Georeferenced subsurface obstacle map","Real-time carbon sequestration accounting at paddock resolution","Predictive flagging of conditions requiring human attention"] },
-                  { label:"Autonomous coordination", color:"#3b33a0", items:["Earthworks fleet task sequencing and zone prioritisation","Drone seeding triggers on post-earthworks windows (24-72hr)","SheepDog drone dispatch from mob-state boundary predictions","Biochar and mulch application rate prescription by zone"] },
+                  { label:"Autonomous coordination", color:"#3b33a0", items:["Earthworks fleet task sequencing and zone prioritisation","Drone seeding triggers on post-earthworks windows (24-72hr)","RINGER drone dispatch from mob-state boundary predictions","Biochar and mulch application rate prescription by zone"] },
                   { label:"Intelligence interface",  color:"#3b33a0", items:["Natural language queries and commands -- phone, desktop, voice","Voice pathway directly to the drone in the field","Third-party API layer for data licensing","TerraOS: multi-property intelligence from 2029"] },
                 ].map(function(block) {
                   return (
@@ -814,11 +817,43 @@ export default function App() {
             <h2 style={s.h2}>Data flywheel</h2>
             <Flywheel/>
             <hr style={s.rule}/>
+            <h2 style={s.h2}>Virtual Fencing 2.0 -- RINGER drones</h2>
+            <p style={s.body}>Current collar-based virtual fencing conflates three functions into one device. VF2.0 separates them. The drone is the only component the animal ever sees. No novel aversive stimulus. Sheepdog logic in code.</p>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12, marginBottom:20 }}>
+              {[
+                { label:"Sensing",    sub:"GPS ear tag network",       color:"#0a6b47", items:["GPS positioning -- continuous","Behavioural telemetry (graze/ruminate/move)","Audio cue -- GPS-triggered, no aversion","Upgrades existing commercial ear tag"] },
+                { label:"Computation",sub:"Mob-state algorithm",       color:"#3b33a0", items:["Mob cohesion and drift direction model","Predictive timing -- prevent, not correct","Pressure geometry: vector, altitude, hover","Identifies lead animals as leverage point"] },
+                { label:"Actuation",  sub:"Autonomous RINGER drone",   color:"#9a5a00", items:["Pressure + release via flight-zone response","Multispectral + thermal data collection","No pain mechanism -- zero welfare exposure","Secondary: continuous pasture imaging"] },
+              ].map(function(layer) {
+                return (
+                  <div key={layer.label} style={s.cardSm}>
+                    <div style={{ fontSize:14, fontWeight:"bold", fontFamily:"system-ui,sans-serif", color:layer.color, marginBottom:2 }}>{layer.label}</div>
+                    <div style={{ fontSize:12, fontFamily:"system-ui,sans-serif", color:"#888780", marginBottom:12, paddingBottom:10, borderBottom:"1px solid #e8e6e0" }}>{layer.sub}</div>
+                    {layer.items.map(function(it) { return <div key={it} style={{ fontSize:13, fontFamily:"system-ui,sans-serif", color:"#3d3d3a", padding:"5px 0", borderBottom:"1px solid #f0ede5", lineHeight:1.4 }}>{it}</div>; })}
+                  </div>
+                );
+              })}
+            </div>
+            <p style={{ ...s.body, marginBottom:12 }}>Step through the four stages of the mob-state algorithm.</p>
+            {(function() {
+              var d = DIAGRAMS.find(function(x) { return x.id==="sheepdog"; });
+              if (!d) return null;
+              return (
+                <div onClick={function() { setActiveDiagram(d); }} style={{ background:"#fff", border:"1px solid #e8e6e0", borderRadius:8, padding:"20px 24px", cursor:"pointer", display:"flex", alignItems:"center", gap:16, marginBottom:28 }} onMouseEnter={function(e) { e.currentTarget.style.borderColor=d.color; }} onMouseLeave={function(e) { e.currentTarget.style.borderColor="#e8e6e0"; }}>
+                  <div style={{ width:40, height:40, borderRadius:8, background:d.color, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="3" stroke="#fff" strokeWidth="1.5"/><path d="M6 10h8M10 6v8" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                  </div>
+                  <div style={{ flex:1 }}><div style={{ fontFamily:"system-ui,sans-serif", fontSize:14, fontWeight:500, color:"#1a1a18", marginBottom:2 }}>{d.title}</div><div style={{ fontSize:13, color:"#888780" }}>{d.desc}</div></div>
+                  <div style={{ fontFamily:"system-ui,sans-serif", fontSize:12, color:d.color, fontWeight:500, whiteSpace:"nowrap" }}>Open</div>
+                </div>
+              );
+            })()}
+            <hr style={s.rule}/>
             <h2 style={s.h2}>Autonomy transition timeline</h2>
             <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:28 }}>
               {[
                 { label:"Tractor + JD Chisel Plow", sub:"Contour tillage",                    status:"Fully autonomous -- commercial launch 2026", sc:"#0a6b47", sbg:"#f0faf5" },
-                { label:"SheepDog Drones (VF2.0)",    sub:"Virtual fencing + data collection",  status:"POC trial 2026 -- operational 2027",         sc:"#9a5a00", sbg:"#fffbf0" },
+                { label:"RINGER Drones (VF2.0)",    sub:"Virtual fencing + data collection",  status:"POC trial 2026 -- operational 2027",         sc:"#9a5a00", sbg:"#fffbf0" },
                 { label:"Tractor + Yeomans Plow",   sub:"Contour subsoil aeration",           status:"Human-operated now -- autonomous ~2029",     sc:"#9a5a00", sbg:"#fffbf0" },
                 { label:"Bobcat -- half-moon pits", sub:"Water harvesting earthworks",        status:"GPS-guided now -- autonomous fleet ~2030",   sc:"#9a5a00", sbg:"#fffbf0" },
                 { label:"TerraOS",                  sub:"Central multi-property intelligence",status:"Building now -- operational 2029",            sc:"#3b33a0", sbg:"#f5f4ff" },
@@ -855,92 +890,6 @@ export default function App() {
           </div>
         )}
 
-        {tab==="sheepdog" && (
-          <div>
-            <div style={s.eyebrow}>Autonomous livestock management</div>
-            <h1 style={s.h1}>SheepDog — pressure and release at scale</h1>
-            <p style={{ ...s.body, fontSize:17, maxWidth:640 }}>Current collar-based virtual fencing conflates three functions in one device: sensing position, computing a response, and delivering an aversive stimulus. VF2.0 separates them entirely. The ear tag senses. The algorithm computes. The drone acts. The animal never experiences anything it hasn't evolved to understand — pressure from a predator shape, and release when it moves away.</p>
-
-            <div style={{ ...s.card, borderLeft:"3px solid #9a5a00", marginBottom:28 }}>
-              <h3 style={{ ...s.h3, color:"#9a5a00", marginBottom:12 }}>Why this is not a better shock collar</h3>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-                {[
-                  { label:"Collar-based VF", color:"#c0392b", bg:"#fdf0ee", items:["Novel aversive stimulus -- no evolutionary reference","Device on animal delivers punishment","Welfare exposure and regulatory risk","Senses, computes, and acts in one unit","No data yield beyond containment"] },
-                  { label:"SheepDog VF2.0",  color:"#0a6b47", bg:"#f0faf5", items:["Pressure + release -- evolved flight-zone response","Drone acts at distance -- animal never touched","Zero pain mechanism, zero welfare exposure","Three separated functions: sense / compute / act","Every flight yields pasture, carbon, thermal data"] },
-                ].map(function(col) {
-                  return (
-                    <div key={col.label} style={{ background:col.bg, border:"1px solid #e8e6e0", borderRadius:8, padding:16 }}>
-                      <div style={{ fontSize:12, fontFamily:"system-ui,sans-serif", fontWeight:500, color:col.color, marginBottom:10, paddingBottom:8, borderBottom:"1px solid #e8e6e0", letterSpacing:"0.04em" }}>{col.label}</div>
-                      {col.items.map(function(it) { return <div key={it} style={{ fontSize:13, fontFamily:"system-ui,sans-serif", color:"#3d3d3a", padding:"4px 0", borderBottom:"1px solid #e8e6e040", lineHeight:1.5 }}>{it}</div>; })}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <h2 style={s.h2}>Three-layer architecture</h2>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12, marginBottom:28 }}>
-              {[
-                { label:"Sensing",     sub:"GPS ear tag network",      color:"#0a6b47", items:["GPS positioning -- continuous","Behavioural telemetry (graze/ruminate/move)","Audio cue -- GPS-triggered, no aversion","Upgrades existing commercial ear tag"] },
-                { label:"Computation", sub:"Mob-state algorithm",      color:"#3b33a0", items:["Mob cohesion and drift direction model","Predictive timing -- prevent, not correct","Pressure geometry: vector, altitude, hover","Identifies lead animals as leverage point"] },
-                { label:"Actuation",   sub:"Autonomous SheepDog drone",color:"#9a5a00", items:["Pressure + release via flight-zone response","Multispectral + thermal data collection","No pain mechanism -- zero welfare exposure","Secondary: continuous pasture imaging"] },
-              ].map(function(layer) {
-                return (
-                  <div key={layer.label} style={s.cardSm}>
-                    <div style={{ fontSize:14, fontWeight:"bold", fontFamily:"system-ui,sans-serif", color:layer.color, marginBottom:2 }}>{layer.label}</div>
-                    <div style={{ fontSize:12, fontFamily:"system-ui,sans-serif", color:"#888780", marginBottom:12, paddingBottom:10, borderBottom:"1px solid #e8e6e0" }}>{layer.sub}</div>
-                    {layer.items.map(function(it) { return <div key={it} style={{ fontSize:13, fontFamily:"system-ui,sans-serif", color:"#3d3d3a", padding:"5px 0", borderBottom:"1px solid #f0ede5", lineHeight:1.4 }}>{it}</div>; })}
-                  </div>
-                );
-              })}
-            </div>
-
-            <h2 style={s.h2}>The mob-state algorithm — four stages</h2>
-            <p style={{ ...s.body, marginBottom:16 }}>Step through drift detection, intercept calculation, drone deployment, and mob redirection.</p>
-            <div style={{ border:"1px solid #e8e6e0", borderRadius:8, overflow:"hidden", marginBottom:28 }}>
-              <iframe srcDoc={SHEEPDOG_HTML} style={{ width:"100%", height:440, border:"none", display:"block" }} title="SheepDog algorithm"/>
-            </div>
-
-            <div style={{ ...s.card, background:"#f5f4ff", borderColor:"#c5c2f0", marginBottom:28 }}>
-              <h3 style={{ ...s.h3, color:"#3b33a0", marginBottom:10 }}>Every flight is a data collection event</h3>
-              <p style={{ ...s.body, fontSize:14, marginBottom:16 }}>The SheepDog drone does not return to base empty. Each intercept flight also produces a multispectral pasture biomass reading, a thermal animal health scan across the mob, and a georeferenced carbon data point for the paddock just traversed. Livestock management and carbon MRV are the same physical operation.</p>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
-                {[
-                  { label:"Pasture imaging",  sub:"Multispectral biomass",     color:"#0a6b47", bg:"#f0faf5" },
-                  { label:"Animal health",    sub:"Thermal scanning -- mob",   color:"#9a5a00", bg:"#fffbf0" },
-                  { label:"Carbon MRV",       sub:"Paddock-level sequestration",color:"#3b33a0", bg:"#f5f4ff" },
-                ].map(function(d) {
-                  return (
-                    <div key={d.label} style={{ background:d.bg, border:"1px solid #e8e6e0", borderRadius:8, padding:"14px 16px", textAlign:"center" }}>
-                      <div style={{ fontFamily:"system-ui,sans-serif", fontSize:13, fontWeight:500, color:d.color, marginBottom:4 }}>{d.label}</div>
-                      <div style={{ fontFamily:"system-ui,sans-serif", fontSize:12, color:"#888780" }}>{d.sub}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <hr style={s.rule}/>
-            <h2 style={s.h2}>Deployment status</h2>
-            <div style={{ background:"#fffbf0", border:"1px solid #e8e6e0", borderRadius:8, padding:"16px 20px", marginBottom:10 }}>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-                <div style={{ fontFamily:"system-ui,sans-serif", fontSize:13, fontWeight:500, color:"#1a1a18" }}>SheepDog drones -- VF2.0</div>
-                <span style={{ padding:"3px 10px", borderRadius:4, background:"#fff", border:"1px solid #9a5a00", color:"#9a5a00", fontSize:11, fontFamily:"system-ui,sans-serif", fontWeight:500, whiteSpace:"nowrap" }}>POC trial 2026</span>
-              </div>
-              <p style={{ fontSize:13, fontFamily:"system-ui,sans-serif", color:"#3d3d3a", lineHeight:1.7, marginBottom:0 }}>Drone fleet is operational at proof-of-concept stage. CASA currently requires VLOS for commercial drone operations. Fully autonomous remote BVLOS requires a CASA approval -- timeline 12-18 months from lodgement. POC operations are VLOS-compliant. BVLOS not a prerequisite for seed-stage deployment.</p>
-            </div>
-            <div style={{ padding:14, background:"#fdf8f7", border:"1px solid #f5c6c2", borderRadius:8, marginBottom:28, fontSize:13, fontFamily:"system-ui,sans-serif", color:"#3d3d3a", lineHeight:1.7 }}>
-              <strong style={{ color:"#c0392b" }}>IP status: </strong>VF2.0 invention disclosure filed March 12, 2026. Patent applications across all SheepDog systems are a 6-month priority target. Gap between disclosure and filing is active exposure.
-            </div>
-
-            <hr style={s.rule}/>
-            <div style={{ ...s.card, background:"#f9f8f5" }}>
-              <h3 style={{ ...s.h3, marginBottom:8 }}>The long game</h3>
-              <p style={{ ...s.body, fontSize:14, marginBottom:0 }}>Every system built for autonomous mob management on degraded Australian land is, structurally, a surface robotics platform. SheepDog drones operating across 5,000 hectares of semi-arid terrain solve exactly the problems that planetary surface survey requires: navigation in featureless terrain, autonomous return-to-base, multi-unit coordination, and continuous environmental data collection. The application transfers directly.</p>
-            </div>
-          </div>
-        )}
-
         {tab==="operations" && (
           <div>
             <div style={s.eyebrow}>Operations and team</div>
@@ -952,8 +901,8 @@ export default function App() {
             <h2 style={s.h2}>Founding team</h2>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16, marginBottom:16 }}>
               {[
-                { role:"Founder & CEO", name:"Hobbs Magaret", color:"#1a1a18", body:"Regenerative grazing expert, author of HERD, and developer of the nonequilibrium thermodynamic framework underlying TerraForm Earth's ecological manufacturing methodology. TerraForm Earth is Hobbs's invention -- the five-layer stack, HEIDI architecture, Virtual Fencing 2.0, and the land manufacturing thesis all predate any co-founding discussions. Role: strategy, technology architecture, and on-property operations through proof-of-concept." },
-                { role:"Co-Founder & Executive Chairman", name:"Matthew Warnken", color:"#0a6b47", body:"Established climate entrepreneur and founder of AgriProve -- Australia's leading soil carbon platform. Matthew brings deep expertise in carbon market infrastructure, regulatory engagement, and scaling climate technology businesses. Role: commercial strategy, investor relationships, and carbon market access." },
+                { role:"Founder & CEO — 49%", name:"Hobbs Magaret", color:"#1a1a18", body:"Regenerative grazing expert, author of HERD, and originator of the nonequilibrium thermodynamic framework underlying TerraForm Earth's ecological manufacturing methodology. Inventor of the five-layer stack, HEIDI architecture, and Virtual Fencing 2.0 (invention disclosure filed March 12, 2026). All core IP owned by Hobbs and assigned to the company under the co-founding agreement. Role: strategy, technology architecture, and on-property operations through proof-of-concept." },
+                { role:"Co-Founder & Executive Chairman — 51%", name:"Matthew Warnken", color:"#0a6b47", body:"Established climate entrepreneur and founder of AgriProve — Australia's leading soil carbon platform (AUD $500M+). Matthew brings deep expertise in carbon market infrastructure, ERF regulatory engagement, and scaling climate technology businesses in Australia. Role: commercial strategy, investor relationships, and carbon market access." },
               ].map(function(m) {
                 return (
                   <div key={m.name} style={{ ...s.card, borderTop:"3px solid "+m.color, marginBottom:0 }}>
@@ -964,8 +913,8 @@ export default function App() {
                 );
               })}
             </div>
-            <div style={{ padding:14, background:"#fdf8f7", border:"1px solid #f5c6c2", borderRadius:8, marginBottom:28, fontSize:13, fontFamily:"system-ui,sans-serif", color:"#3d3d3a", lineHeight:1.7 }}>
-              <strong style={{ color:"#c0392b" }}>IP ownership: </strong>All core IP -- HEIDI framework, Virtual Fencing 2.0 (invention disclosure filed March 12, 2026), ecological manufacturing methodology, thermodynamic framework -- is owned by Hobbs Magaret and predates any co-founding discussions. Formal co-founding and IP assignment agreement: 30-day priority. Must be completed before external capital is raised.
+            <div style={{ padding:14, background:"#f0faf5", border:"1px solid #b3d9c8", borderRadius:8, marginBottom:28, fontSize:13, fontFamily:"system-ui,sans-serif", color:"#3d3d3a", lineHeight:1.7 }}>
+              <strong style={{ color:"#0a6b47" }}>IP ownership: </strong>All core IP -- HEIDI framework, Virtual Fencing 2.0 (invention disclosure filed March 12, 2026), ecological manufacturing methodology, thermodynamic framework -- is owned by Hobbs Magaret and assigned to TerraForm Earth under the co-founding agreement. Cap table: Matthew Warnken 51% / Hobbs Magaret 49%.
             </div>
             <h2 style={s.h2}>Seed raise -- AUD $2.5M</h2>
             <p style={s.body}>Funds a structured proof-of-concept on a partner-owned property under equipment-only revenue-sharing. No land acquisition capital required. The POC proves the technology and generates the dataset that de-risks the acquisition model for Series A.</p>
@@ -974,16 +923,16 @@ export default function App() {
                 { label:"Equipment fleet",       val:"AUD $1.22M", note:"4x Bobcat CTL + JD 8R tractor + autonomy kits" },
                 { label:"HEIDI / TerraOS build", val:"AUD $400k",  note:"Architecture, data schema, first-season pipeline" },
                 { label:"POC deployment",        val:"AUD $430k",  note:"Staffing, temp accommodation, logistics Y0-1" },
-                { label:"Regulatory + legal",    val:"AUD $300k",  note:"CASA, carbon registration, IP filings, co-founding structure" },
+                { label:"Regulatory + legal",    val:"AUD $300k",  note:"CASA, carbon registration, IP patent filings, co-founding agreement execution" },
                 { label:"Contingency",           val:"AUD $150k",  note:"Approx. 10% of total program cost" },
               ].map(function(m) { return <div key={m.label} style={s.metaCell}><div style={s.metaVal}>{m.val}</div><div style={s.metaLabel}>{m.label}</div><div style={s.metaNote}>{m.note}</div></div>; })}
             </div>
             <h2 style={s.h2}>Implementation phases</h2>
             <div style={{ marginBottom:28 }}>
               {[
-                { ph:"Phase 0", t:"Months 1-6",  label:"Pre-deployment", color:"#3b33a0", items:["Land access agreement -- equipment-only revenue-sharing with partner property owner","Equipment procurement: 4x Bobcat CTL (T86) + JD 8R tractor + autonomy retrofit kits","HEIDI architecture and data schema design -- foundational, cannot be deferred","CASA BVLOS application lodgement and regulatory engagement","ERF Soil Carbon project registration with Clean Energy Regulator","Team hire: 2x equipment operators, 1x data systems engineer","Temporary modular accommodation established on property"] },
+                { ph:"Phase 0", t:"Months 1-6",  label:"Pre-deployment", color:"#3b33a0", items:["Partner property LOI executed -- named landowner, terms agreed, revenue share documented before raise closes","Land access agreement formalised -- equipment-only revenue-sharing (35%) with partner property owner","Equipment procurement: 4x Bobcat CTL (T86) + JD 8R tractor + autonomy retrofit kits","HEIDI data schema locked -- specific measurement protocols, carbon model structure, and API layer defined before first sensor is deployed","CASA BVLOS application lodgement and regulatory engagement (VLOS operations proceed regardless)","ERF Soil Carbon project registration with Clean Energy Regulator","Team hire: 2x equipment operators, 1x data systems engineer","Temporary modular accommodation established on property"] },
                 { ph:"Phase 1", t:"Months 7-12", label:"Deployment",     color:"#9a5a00", items:["Multiple treatment configurations designed across comparable sub-catchments","Earthworks deployment scheduled against 4-week forward weather window","Bobcat fleet excavates pit network (semi-autonomous, GPS-guided)","Yeomans Plow run by human operator -- standard until autonomy achieved","HEIDI ingests sensor data and begins building property world model","First wet-season infiltration response measured across all configurations"] },
-                { ph:"Phase 2", t:"Year 1-3",    label:"Operations",     color:"#0a6b47", items:["Vegetation establishment monitoring -- ground cover %, biomass, species composition","SheepDog drone VF2.0 conditioning and rollout as rover infrastructure becomes available","ERF Soil Carbon baseline measurement period; first ACCU issuance target Year 2-3","Data platform builds licensable dataset; first licensing conversations","POC outcomes documented to de-risk Series A narrative"] },
+                { ph:"Phase 2", t:"Year 1-3",    label:"Operations",     color:"#0a6b47", items:["Vegetation establishment monitoring -- ground cover %, biomass, species composition","RINGER drone VF2.0 conditioning and rollout as rover infrastructure becomes available","ERF Soil Carbon baseline measurement period; first ACCU issuance target Year 2-3","Data platform builds licensable dataset; first licensing conversations","POC outcomes documented to de-risk Series A narrative"] },
                 { ph:"Phase 3", t:"Year 3+",     label:"Scale",          color:"#1a1a18", items:["Second property -- acquisition model viable with proven outcome data","Fleet expansion and TerraOS multi-property intelligence from 2029","Series A capital raise against first-property demonstrated returns","Transition from equipment-only to acquisition model as primary scaling vehicle"] },
               ].map(function(ph, i, arr) {
                 var br = i===0 ? "8px 8px 0 0" : i===arr.length-1 ? "0 0 8px 8px" : "0";
@@ -1023,6 +972,7 @@ export default function App() {
               { label:"Bobcat CTL -- half-moon pits",        status:"Semi-autonomous, Year 0", sc:"#9a5a00", sbg:"#fffbf0", body:"The Bobcat RogueX3 unveiled at CES 2026 is a concept prototype -- not commercially available. Near-term: standard Bobcat T86 (AUD $120-150k) with GPS-guided aftermarket autonomy retrofit (estimated AUD $30-60k -- no commercial product exists). Total per-machine capital modelled at AUD $180k. Full autonomous capability is a development milestone." },
               { label:"Tractor + Yeomans Plow",              status:"Human-operated, Year 0-2", sc:"#c0392b", sbg:"#fdf0ee", body:"John Deere's autonomous tractor kit is commercially available for the 8R series but is interoperable with JD implements only. The Yeomans Plow is a third-party implement. Near-term: Yeomans Plow operations require a human operator. Development pathway: custom JD integration or independent autonomy stack. Target: autonomous operation by Year 3. Year 0-2 staffing and OpEx implications are reflected in the financial model." },
               { label:"Rover -- drone base station",         status:"Development required",     sc:"#c0392b", sbg:"#fdf0ee", body:"The rover does not yet exist as a commercial product. Until available, the drone fleet requires fixed on-property infrastructure for docking and charging. This constraint is factored into Phase 0 logistics and the seed budget. Rover development is a Year 1-2 engineering milestone." },
+              { label:"RINGER drones -- VF2.0",              status:"POC trial 2026",           sc:"#9a5a00", sbg:"#fffbf0", body:"Drone fleet is operational at proof-of-concept stage. CASA currently requires VLOS for commercial drone operations. Fully autonomous remote BVLOS requires a CASA approval -- timeline 12-18 months from lodgement. POC operations are VLOS-compliant. BVLOS not a prerequisite for seed-stage deployment." },
             ].map(function(item, i) {
               return (
                 <div key={i} style={{ background:item.sbg, border:"1px solid #e8e6e0", borderRadius:8, padding:"16px 20px", marginBottom:8 }}>
@@ -1137,7 +1087,7 @@ export default function App() {
             <p style={s.body}>Australia has tens of millions of hectares of degraded, abandoned, or government-held former pastoral land that is effectively worthless as a cattle operation -- but potentially highly valuable as a platform for stacked environmental markets. The worse the land, the stronger the additionality argument.</p>
             {[
               { n:"01", label:"WA Diversification Leases",    sub:"Unallocated Crown Land",        color:"#c4420a", lbg:"#fff5f0", body:"Western Australia's Diversification Lease covers 25 pastoral leases not renewed in 2015, which reverted to Unallocated Crown Land. No public tender required -- private treaty direct to the Minister for Lands. Permitted uses include carbon farming, conservation, renewable energy, and grazing. On genuinely degraded land with no competing bidders, rent could be nominal.", tags:["Private treaty only","No competitive tender","Carbon + grazing permitted"] },
-              { n:"02", label:"DPaW/DBCA Co-management",     sub:"5M+ ha former pastoral land",   color:"#9a5a00", lbg:"#fffbf0", body:"WA's Department of Biodiversity holds over 5 million hectares of degraded former pastoral land -- many reserves never formally gazetted due to unresolved Native Title. TerraForm registers carbon and biodiversity projects on these reserves and splits ACCU revenue with the Crown. Government gets active land management for free. TerraForm gets access to millions of hectares at no acquisition cost.", tags:["No acquisition cost","Revenue share model","Government partnership"] },
+              { n:"02", label:"DPaW/DBCA Co-management",     sub:"5M+ ha former pastoral land",   color:"#9a5a00", lbg:"#fffbf0", body:"WA's Department of Biodiversity holds over 5 million hectares of degraded former pastoral land -- many reserves never formally gazetted due to unresolved Native Title. TerraForm funds feral animal control, registers carbon and biodiversity projects, and splits ACCU revenue with the Crown. Government gets active management for free. TerraForm gets access to millions of hectares at no acquisition cost.", tags:["No acquisition cost","Revenue share model","Government partnership"] },
               { n:"03", label:"SA Pastoral Board",           sub:"Surrendered and cancelled leases",color:"#0a6b47", lbg:"#f0faf5", body:"South Australia's Pastoral Board cancels abandoned leases, which revert to Crown pastoral land. Lease rents are set on a per-beast-area formula -- if the beast area is near zero due to degradation, so is the rent. Carbon and conservation explicitly permitted under 2024 SA Pastoral Act amendments.", tags:["Near-zero rent","2024 Act amendments","Carbon explicitly permitted"] },
               { n:"04", label:"NT Aboriginal Land Trust JVs",sub:"Strongest additionality argument",color:"#3b33a0", lbg:"#f5f4ff", body:"The most degraded cattle stations in Central Australia were sold to Aboriginal Land Trusts because they were flogged out with worn infrastructure. TerraForm structures as a joint venture: Traditional Owner group provides freehold access, TerraForm provides capital, project management, and market access. Freehold -- no government approval required.", tags:["Aboriginal freehold","Joint venture structure","No Native Title complexity"] },
             ].map(function(opt) {
@@ -1154,9 +1104,9 @@ export default function App() {
             })}
             <div style={{ ...s.card, background:"#f0faf5", borderColor:"#b3d9c8" }}>
               <h3 style={{ ...s.h3, color:"#0a6b47", marginBottom:8 }}>Stacked environmental markets</h3>
-              <p style={{ ...s.body, marginBottom:16, fontSize:15 }}>A single degraded property can simultaneously generate soil carbon ACCUs and Nature Repair Market biodiversity certificates. Legally confirmed -- one parcel, multiple income streams, no additional land required.</p>
+              <p style={{ ...s.body, marginBottom:16, fontSize:15 }}>A single degraded property can simultaneously generate soil carbon ACCUs, Nature Repair Market biodiversity certificates, and feral animal avoided-emissions credits. Legally confirmed -- one parcel, multiple income streams, no additional land required.</p>
               <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
-                {["Soil carbon ACCUs","Nature Repair certificates","Biodiversity rangelands","IFLM (if available)"].map(function(m) { return <span key={m} style={s.pill("#0a6b47")}>{m}</span>; })}
+                {["Soil carbon ACCUs","Nature Repair certificates","Feral animal carbon","Biodiversity rangelands","IFLM (if available)"].map(function(m) { return <span key={m} style={s.pill("#0a6b47")}>{m}</span>; })}
               </div>
             </div>
           </div>
@@ -1248,7 +1198,7 @@ export default function App() {
             <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:28 }}>
               {[
                 { from:"HEIDI -- Earth property intelligence",         to:"Planetary management AI for closed-loop biosphere systems",    color:"#3b33a0" },
-                { from:"SheepDog drones -- autonomous mob management",   to:"Surface survey, regolith sampling, habitat perimeter",          color:"#9a5a00" },
+                { from:"RINGER drones -- autonomous mob management",   to:"Surface survey, regolith sampling, habitat perimeter",          color:"#9a5a00" },
                 { from:"Earthworks -- GPS-guided water interception",  to:"Regolith modification for ice extraction and water routing",    color:"#0a6b47" },
                 { from:"Ecological manufacturing -- biological succession", to:"Soil engineering: introducing biology to inert substrate", color:"#c4420a" },
                 { from:"Carbon MRV -- atmospheric and soil measurement", to:"Atmospheric composition monitoring, terraforming progress tracking", color:"#1155a0" },
